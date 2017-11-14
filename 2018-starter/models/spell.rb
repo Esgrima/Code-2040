@@ -21,6 +21,15 @@ class Spell
     new(data.sample)
   end
 
+  # allows me to access the name as a string
+  def name
+    @name
+  end
+
+  def formatted_name
+    @formatted_name
+  end
+
   def self.effects
     data.map{|el| el["Effect"]}
   end
@@ -40,7 +49,7 @@ class Spell
   # This instance method should return the reversed name of a spell
   # Tests: `bundle exec rspec -t reverse .`
   def reverse_name
-    params[:name].reverse
+    name.reverse
   end
 
   # Spell 2: Counter
@@ -48,7 +57,24 @@ class Spell
   # (integer) of mentions of the spell.
   # Tests: `bundle exec rspec -t counter .`
   def mention_count
-    'write this method'
+    mentions = Mention.data
+    spell_count = 0
+
+    # for each object in mentions array
+    mentions.each {|i|
+      # Test Feature
+      # puts i["Spell"]
+      # puts "-----------"
+      # puts self.name
+
+      # if each hash key("Spell")'s value == spell's name
+      if i["Spell"] == self.name
+        spell_count += 1
+      end
+    }
+    # Test Feature
+    # puts spell_count
+    spell_count
   end
 
   # Spell 3: Letter
@@ -56,7 +82,27 @@ class Spell
   # which start with the same first letter as the spell's name
   # Tests: `bundle exec rspec -t letter .`
   def names_with_same_first_letter
-    ['write this method']
+    first_letter = self.name[0].downcase
+    spells = Spell.data
+    same_1st_ltr = Set.new
+
+    spells.each {|i|
+      # puts "******Before Test Output******"
+      # puts i["Spell(Lower)"]
+      # puts i["Spell(Lower)"][0]
+      # puts "****** Before Test Output******"
+
+      if i["Spell(Lower)"][0] == first_letter
+        same_1st_ltr.add(i["Spell(Lower)"])
+      end
+    }
+    # Test Feature
+    # puts set_same_1st_ltr
+    # puts first_letter
+    # Test Feature
+
+    # converts the set to an array
+    same_1st_ltr.to_a
   end
 
   # Spell 4: Lookup
@@ -65,10 +111,26 @@ class Spell
   # If none are found it should return nil.
   # Tests: `bundle exec rspec -t lookup .`
   def self.find_by_mention(mention)
-    Spell.new({"Classification" => 'write this method',
-               "Effect" => 'write this method',
-               "Spell(Lower)" => 'write this method',
-               "Spell" => 'write this method'})
+    spell_name = mention.name
+    classification = nil
+    effect = nil
+    spell_lower = nil
+    spell = nil
+    spells = Spell.data
+
+    spells.each {|i|
+      if i["Spell(Lower)"] == spell_name
+        classification = i["Classification"]
+        effect = i["Effect"]
+        spell_lower = spell_name.downcase
+        spell = spell_name.capitalize
+      end
+    }
+    return unless spell != nil
+      Spell.new({"Classification" => classification,
+               "Effect" => effect,
+               "Spell(Lower)" => spell_lower,
+               "Spell" => spell})
   end
 
 end

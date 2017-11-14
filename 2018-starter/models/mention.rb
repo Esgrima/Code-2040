@@ -21,4 +21,9 @@ class Mention
     new(data.sample)
   end
 
+  def name
+    @name
+  end
+
+
 end
